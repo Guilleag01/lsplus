@@ -20,7 +20,7 @@ pub fn default(mut elements: Vec<Element>) {
             let mut max_len = 0;
             for k in 0..i {
                 if i * j + k < elements.len() {
-                    let space = get_string_length(&elements[i * j + k].to_string());
+                    let space = get_string_length(&elements[i * j + k].to_string()) + 1;
                     if space > max_len {
                         max_len = space;
                     }
@@ -39,7 +39,7 @@ pub fn default(mut elements: Vec<Element>) {
         for j in 0..num_columns {
             if i * j + k < elements.len() {
                 print!(
-                    "{}",
+                    "{} ",
                     pad_string(elements[i * j + k].to_string(), column_widths[j], true)
                 );
             }

@@ -6,9 +6,11 @@ use std::{
     time::SystemTime,
 };
 
+// use clap::builder::styling::Metadata;
+
 use crate::utils::get_icon_file_type;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub enum TypeOfFile {
     File,
     Dir,
@@ -22,7 +24,7 @@ pub struct Element {
     path: String,
     file_type: TypeOfFile,
     name: String,
-    perms: fs::Permissions,
+    perms: Option<fs::Permissions>,
     size: u64,
     creation: SystemTime,
 }
@@ -31,7 +33,19 @@ impl Element {
     pub fn new(path_str: &str) -> Element {
         let path_built = Path::new(path_str);
         // println!("{:?}", path_built);
-        let metadata = fs::metadata(path_str).unwrap();
+        let metadata: fs::Metadata; // = fs::metadata(path_str).unwrap();
+        if let Result::Ok(m) = fs::metadata(path_str) {
+            metadata = m;
+        } else {
+            return Self {
+                path: path_str.to_string(),
+                file_type: TypeOfFile::File,
+                name: path_str.split('/').last().unwrap().to_string(),
+                perms: None,
+                size: 0,
+                creation: SystemTime::UNIX_EPOCH,
+            };
+        }
         let symlink_metadata = fs::symlink_metadata(path_str).unwrap();
 
         let t: TypeOfFile;
@@ -66,7 +80,7 @@ impl Element {
             path: path_str.to_string(),
             file_type: t,
             name,
-            perms: metadata.permissions(),
+            perms: Some(metadata.permissions()),
             size: metadata.len(),
             creation: metadata.created().unwrap(),
         }
@@ -84,7 +98,7 @@ impl Element {
         self.name.clone()
     }
 
-    pub fn get_perms(&self) -> fs::Permissions {
+    pub fn get_perms(&self) -> Option<fs::Permissions> {
         self.perms.clone()
     }
 
@@ -106,15 +120,15 @@ impl Display for Element {
             TypeOfFile::File => file_icon,
             TypeOfFile::Dir => {
                 is_dir = true;
-                "  "
+                " "
             }
-            TypeOfFile::Link => " 󱅷 ",
-            TypeOfFile::Block => " 󰋊 ",
-            TypeOfFile::Socket => " 󰛳 ",
+            TypeOfFile::Link => "󱅷 ",
+            TypeOfFile::Block => "󰋊 ",
+            TypeOfFile::Socket => "󰛳 ",
         };
         write!(
             f,
-            "{}{}{}  ",
+            "{}{}{} ",
             icon,
             self.name.as_str(),
             if is_dir { "/" } else { "" }
