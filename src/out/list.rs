@@ -5,7 +5,7 @@ pub fn list(mut elements: Vec<Element>) {
     elements.sort_unstable_by_key(|a: &Element| a.get_name());
     let width = term_size::dimensions().unwrap().0;
     //  ╭──────────────╼ File name ╾──────────────┬─╼ Size ╾─┬──╼ Creation ╾──╮
-    //  │                                         │          │                │
+    //  │ some_example_file                       │ 420.69 G │ 01-01-70 00:00 │
     //  ╰─────────────────────────────────────────┴──────────┴────────────────╯
     let mut name_max_len = 0;
     for e in &elements {

@@ -1,4 +1,10 @@
-use std::{fmt::Display, fs, os::unix::prelude::FileTypeExt, path::Path, time::SystemTime};
+use std::{
+    fmt::Display,
+    fs::{self, read_link},
+    os::unix::prelude::FileTypeExt,
+    path::Path,
+    time::SystemTime,
+};
 
 use crate::utils::get_icon_file_type;
 
@@ -44,15 +50,22 @@ impl Element {
             t = TypeOfFile::File;
         }
 
+        let mut name = path_built
+            .file_name()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string();
+
+        if symlink_metadata.is_symlink() {
+            name.push_str(" -> ");
+            name.push_str(read_link(path_built).unwrap().to_str().unwrap())
+        }
+
         Self {
             path: path_str.to_string(),
             file_type: t,
-            name: path_built
-                .file_name()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .to_string(),
+            name,
             perms: metadata.permissions(),
             size: metadata.len(),
             creation: metadata.created().unwrap(),
