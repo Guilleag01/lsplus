@@ -18,8 +18,8 @@ pub fn list(elements: Vec<Element>, recursive_limit: usize) {
         .min(width - 31);
 
     print_header(name_length);
-    print_elements(&elements, name_length, recursive_limit, 0, &Vec::new());
-    print_footer(&elements, name_length);
+    let num_elements = print_elements(&elements, name_length, recursive_limit, 0, &Vec::new());
+    print_footer(num_elements, name_length);
 }
 
 fn print_header(name_length: usize) {
@@ -40,7 +40,9 @@ fn print_elements(
     recursive_limit: usize,
     current_depth: usize,
     is_last_element: &[bool],
-) {
+) -> usize {
+    let mut num_elements = elements.len();
+
     let mut new_is_last_element = is_last_element.to_owned();
 
     for (i, e) in elements.iter().enumerate() {
@@ -91,7 +93,7 @@ fn print_elements(
         if e.get_file_type() == TypeOfFile::Dir && current_depth < recursive_limit {
             let dir_path = e.get_path_string();
             new_is_last_element.push(i == elements.len() - 1);
-            print_elements(
+            num_elements += print_elements(
                 &get_elements_from_path(dir_path, true),
                 name_length,
                 recursive_limit,
@@ -101,6 +103,7 @@ fn print_elements(
             new_is_last_element.pop();
         }
     }
+    num_elements
 }
 
 fn add_recursive_lines(e_string: &mut String, is_last_element: &[bool], is_last: bool) {
@@ -161,8 +164,8 @@ fn print_size_and_creation_date(e: &Element) {
     println!("│");
 }
 
-fn print_footer(elements: &Vec<Element>, name_length: usize) {
-    let num_elements = elements.len();
+fn print_footer(num_elements: usize, name_length: usize) {
+    // let num_elements = elements.len();
     let num_elements_len = (num_elements as f32).log10() as usize;
     let name_length_fixed = name_length - (num_elements_len + 13);
     print!("╰");
