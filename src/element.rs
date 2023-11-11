@@ -6,8 +6,6 @@ use std::{
     time::SystemTime,
 };
 
-// use clap::builder::styling::Metadata;
-
 use crate::utils::get_icon_file_type;
 
 #[derive(Copy, Clone, Eq, PartialEq)]
@@ -32,8 +30,7 @@ pub struct Element {
 impl Element {
     pub fn new(path_str: &str) -> Element {
         let path_built = Path::new(path_str);
-        // println!("{:?}", path_built);
-        let metadata: fs::Metadata; // = fs::metadata(path_str).unwrap();
+        let metadata: fs::Metadata;
         if let Result::Ok(m) = fs::metadata(path_str) {
             metadata = m;
         } else {

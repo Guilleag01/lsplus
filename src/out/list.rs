@@ -3,8 +3,8 @@ use crate::utils::{
     get_elements_from_path, get_size_string, get_string_length, pad_string, system_time_to_string,
 };
 
-pub fn list(mut elements: Vec<Element>, recursive_limit: usize) {
-    elements.sort_unstable_by_key(|a: &Element| a.get_name());
+pub fn list(elements: Vec<Element>, recursive_limit: usize) {
+    // elements.sort_unstable_by_key(|a: &Element| a.get_name());
     let width = term_size::dimensions().unwrap().0;
     //  ╭──────────────╼ File name ╾──────────────┬─╼ Size ╾─┬──╼ Creation ╾──╮
     //  │ some_example_file                       │ 420.69 G │ 01-01-70 00:00 │
@@ -15,7 +15,7 @@ pub fn list(mut elements: Vec<Element>, recursive_limit: usize) {
     let name_length = name_max_len
         .max(14 + (elements.len() as f32).log10() as usize)
         .max(13)
-        .min(width - 30);
+        .min(width - 31);
 
     print_header(name_length);
     print_elements(&elements, name_length, recursive_limit, 0, &Vec::new());
@@ -43,78 +43,49 @@ fn print_elements(
 ) {
     let mut new_is_last_element = is_last_element.to_owned();
 
-    // println!("{:?}", is_last_element);
-
     for (i, e) in elements.iter().enumerate() {
-        let str_len = get_string_length(e.get_name().as_str());
         print!("│ ");
-        if get_string_length(e.to_string().as_str()) > name_length {
-            let mut e_string = String::new();
+        let mut e_string = String::new();
+        if current_depth > 0 {
+            add_recursive_lines(&mut e_string, &new_is_last_element, i == elements.len() - 1);
+        }
+
+        e_string.push_str(e.to_string().as_str());
+        print!(
+            "{}",
+            pad_string(
+                get_slice_of_string(e_string.as_str(), name_length - 1, 0, current_depth),
+                name_length,
+                true
+            )
+        );
+
+        print_size_and_creation_date(e);
+
+        let num_splits =
+            get_string_length(e.get_name().as_str()) / (name_length - (3 + 2 * current_depth));
+        // println!("{}", num_splits + 1);
+        for j in 1..num_splits + 1 {
+            let mut e_name = String::from("│ ");
             if current_depth > 0 {
-                for &is_last in &new_is_last_element[1..] {
-                    if is_last {
-                        e_string.push_str("  ");
-                    } else {
-                        e_string.push_str("│ ");
-                    }
-                }
-                if i == elements.len() - 1 {
-                    e_string.push_str("╰─");
-                } else {
-                    e_string.push_str("├─");
-                }
-            }
-            e_string.push_str(e.to_string().as_str());
-            print!(
-                "{}",
-                pad_string(
-                    e_string.as_str()[..=name_length].to_string(),
-                    name_length - 2,
-                    true
+                add_recursive_lines_for_name_resize(
+                    &mut e_name,
+                    &new_is_last_element,
+                    i == elements.len() - 1,
                 )
+            }
+            e_name.push_str("  ");
+            e_name.push_str(
+                get_slice_of_string(
+                    e.get_name().as_str(),
+                    name_length - (3 + 2 * current_depth),
+                    j,
+                    current_depth,
+                )
+                .as_str(),
             );
-            print_size_and_creation_date(e);
-            let mut e_name = String::new();
-            if current_depth > 0 {
-                for _ in 0..current_depth {
-                    e_name.push_str("  ");
-                }
-            }
-            e_name.push_str(e.get_name().as_str());
-            for i in 1..(str_len / (name_length - 5) + 1) {
-                print!(
-                    "│   {}",
-                    pad_string(
-                        e.get_name().as_str()
-                            [((name_length - 5) * i)..((name_length - 5) * (i + 1)).min(str_len)]
-                            .to_string(),
-                        name_length - 3,
-                        true
-                    )
-                );
-
-                println!("│          │                │");
-            }
-        } else {
-            let mut e_string = String::new();
-            if current_depth > 0 {
-                for &is_last in &new_is_last_element[1..] {
-                    if is_last {
-                        e_string.push_str("  ");
-                    } else {
-                        e_string.push_str("│ ");
-                    }
-                }
-
-                if i == elements.len() - 1 {
-                    e_string.push_str("╰─");
-                } else {
-                    e_string.push_str("├─");
-                }
-            }
-            e_string.push_str(e.to_string().as_str());
-            print!("{}", pad_string(e_string, name_length, true));
-            print_size_and_creation_date(e)
+            print!("{}", pad_string(e_name, name_length + 2, true));
+            println!("│          │                │");
         }
 
         if e.get_file_type() == TypeOfFile::Dir && current_depth < recursive_limit {
@@ -128,9 +99,54 @@ fn print_elements(
                 &new_is_last_element,
             );
             new_is_last_element.pop();
-            // println!("{:?}", is_last_element);
         }
     }
+}
+
+fn add_recursive_lines(e_string: &mut String, is_last_element: &[bool], is_last: bool) {
+    for &is_last in &is_last_element[1..] {
+        if is_last {
+            e_string.push_str("  ");
+        } else {
+            e_string.push_str("│ ");
+        }
+    }
+
+    if is_last {
+        e_string.push_str("╰─");
+    } else {
+        // println!("yahooo");
+        e_string.push_str("├─");
+    }
+}
+
+fn add_recursive_lines_for_name_resize(
+    e_string: &mut String,
+    is_last_element: &[bool],
+    is_last: bool,
+) {
+    for &is_last in &is_last_element[1..] {
+        if is_last {
+            e_string.push_str("  ");
+        } else {
+            e_string.push_str("│ ");
+        }
+    }
+
+    if is_last {
+        e_string.push_str("  ");
+    } else {
+        e_string.push_str("│ ");
+    }
+}
+
+#[inline]
+fn get_slice_of_string(e: &str, name_length: usize, i: usize, _current_depth: usize) -> String {
+    // println!("--{}--", e);
+    e.chars().collect::<Vec<char>>()[((name_length) * i).min(get_string_length(e))
+        ..((name_length) * (i + 1)).min(get_string_length(e))]
+        .iter()
+        .collect()
 }
 
 fn print_size_and_creation_date(e: &Element) {

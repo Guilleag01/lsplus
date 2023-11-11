@@ -16,15 +16,17 @@ pub fn get_elements_from_path(path: String, all: bool) -> Vec<Element> {
 }
 
 pub fn pad_string(s: String, pad: usize, after: bool) -> String {
+    // println!("{}", pad);
+
     let mut s2 = String::new();
-    // println!("{}, {}", s.len(), pad);
+    let s_length = get_string_length(&s);
     if after {
         s2.push_str(s.as_str());
-        for _ in 0..(pad - get_string_length(&s)) {
+        for _ in 0..(pad.saturating_sub(s_length)) {
             s2.push(' ');
         }
     } else {
-        for _ in 0..(pad - get_string_length(&s)) {
+        for _ in 0..(pad.saturating_sub(s_length)) {
             s2.push(' ');
         }
         s2.push_str(s.as_str());
@@ -36,7 +38,6 @@ pub fn pad_string(s: String, pad: usize, after: bool) -> String {
 // character when using .len()
 #[inline]
 pub fn get_string_length(s: &str) -> usize {
-    s.chars().collect::<Vec<char>>().len();
     s.chars().count()
 }
 
@@ -46,7 +47,6 @@ pub fn get_size_string(bytes: u64) -> String {
     }
     let bytes_f32 = bytes as f32;
     let exp = bytes_f32.log(1024.0).floor();
-    // print!("\n{}", exp);
     let divided_num = bytes_f32 / 1024.0_f32.powf(exp);
     let unit = ['B', 'K', 'M', 'G', 'T', 'P', 'Y', 'E'][exp as usize];
     format!("{:.2} {} ", divided_num, unit)
@@ -60,21 +60,21 @@ pub fn system_time_to_string(system_time: SystemTime) -> String {
 pub fn get_icon_file_type<'a>(filename: String) -> &'a str {
     let extension = filename.split('.').collect::<Vec<&str>>()[1..].join(".");
     match extension.to_lowercase().as_str() {
-        "zip" | "rar" | "7zip" | "tar" | "tar.gz" | "tgz" => "󰗄 ",
-        "rs" => " ",
         "jpg" | "jpeg" | "png" | "bmp" | "gif" | "webp" | "svg" => "󰋩 ",
+        "zip" | "rar" | "7zip" | "tar" | "tar.gz" | "tgz" => "󰗄 ",
         "flv" | "avi" | "mp4" | "webm" | "mov" => " ",
         "exe" | "ini" | "bat" => " ",
-        "py" => " ",
-        "c" => " ",
-        "cpp" => " ",
-        "json" => " ",
-        "pdf" => "󰈦 ",
         "java" | "jar" => " ",
-        "js" => " ",
+        "json" => " ",
         "html" => " ",
-        "css" => " ",
         "csv" => " ",
+        "cpp" => " ",
+        "pdf" => "󰈦 ",
+        "css" => " ",
+        "rs" => " ",
+        "py" => " ",
+        "js" => " ",
+        "c" => " ",
         _ => "󰈔 ",
     }
 }
