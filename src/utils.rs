@@ -16,8 +16,6 @@ pub fn get_elements_from_path(path: String, all: bool) -> Vec<Element> {
 }
 
 pub fn pad_string(s: String, pad: usize, after: bool) -> String {
-    // println!("{}", pad);
-
     let mut s2 = String::new();
     let s_length = get_string_length(&s);
     if after {
@@ -57,20 +55,25 @@ pub fn system_time_to_string(system_time: SystemTime) -> String {
     datetime.format("%d-%m-%y %H:%M").to_string()
 }
 
+// ALL ICONS MUST BE FOLLOWED BY A SPACE
 pub fn get_icon_file_type<'a>(filename: String) -> &'a str {
-    let extension = filename.split('.').collect::<Vec<&str>>()[1..].join(".");
+    let extension = filename.split('.').last().unwrap(); //.collect::<Vec<&str>>()[1..].join(".");
     match extension.to_lowercase().as_str() {
         "jpg" | "jpeg" | "png" | "bmp" | "gif" | "webp" | "svg" => "󰋩 ",
-        "zip" | "rar" | "7zip" | "tar" | "tar.gz" | "tgz" => "󰗄 ",
+        "zip" | "rar" | "7zip" | "tar" | "gz" | "tgz" => "󰗄 ",
         "flv" | "avi" | "mp4" | "webm" | "mov" => " ",
-        "exe" | "ini" | "bat" => " ",
+        "config" | "toml" | "yaml" | "conf" => "󰒓 ",
+        "exe" | "bat" | "dll" => " ",
         "java" | "jar" => " ",
         "json" => " ",
         "html" => " ",
         "csv" => " ",
         "cpp" => " ",
-        "pdf" => "󰈦 ",
+        "pdf" => " ",
         "css" => " ",
+        "bin" => " ",
+        "asm" => " ",
+        "txt" => " ",
         "rs" => " ",
         "py" => " ",
         "js" => " ",

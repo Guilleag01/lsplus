@@ -4,11 +4,10 @@ use crate::utils::{
 };
 
 pub fn list(elements: Vec<Element>, recursive_limit: usize) {
-    // elements.sort_unstable_by_key(|a: &Element| a.get_name());
-    let width = term_size::dimensions().unwrap().0;
     //  ╭──────────────╼ File name ╾──────────────┬─╼ Size ╾─┬──╼ Creation ╾──╮
     //  │ some_example_file                       │ 420.69 G │ 01-01-70 00:00 │
     //  ╰─────────────────────────────────────────┴──────────┴────────────────╯
+    let width = term_size::dimensions().unwrap().0;
 
     let name_max_len = get_max_width(&elements, recursive_limit, 0);
 
@@ -66,7 +65,7 @@ fn print_elements(
 
         let num_splits =
             get_string_length(e.get_name().as_str()) / (name_length - (3 + 2 * current_depth));
-        // println!("{}", num_splits + 1);
+
         for j in 1..num_splits + 1 {
             let mut e_name = String::from("│ ");
             if current_depth > 0 {
@@ -118,7 +117,6 @@ fn add_recursive_lines(e_string: &mut String, is_last_element: &[bool], is_last:
     if is_last {
         e_string.push_str("╰─");
     } else {
-        // println!("yahooo");
         e_string.push_str("├─");
     }
 }
@@ -145,7 +143,6 @@ fn add_recursive_lines_for_name_resize(
 
 #[inline]
 fn get_slice_of_string(e: &str, name_length: usize, i: usize, _current_depth: usize) -> String {
-    // println!("--{}--", e);
     e.chars().collect::<Vec<char>>()[((name_length) * i).min(get_string_length(e))
         ..((name_length) * (i + 1)).min(get_string_length(e))]
         .iter()
@@ -165,7 +162,6 @@ fn print_size_and_creation_date(e: &Element) {
 }
 
 fn print_footer(num_elements: usize, name_length: usize) {
-    // let num_elements = elements.len();
     let num_elements_len = (num_elements as f32).log10() as usize;
     let name_length_fixed = name_length - (num_elements_len + 13);
     print!("╰");
