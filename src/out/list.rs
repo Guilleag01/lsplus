@@ -64,7 +64,7 @@ fn print_elements(
         print_size_and_creation_date(e);
 
         let num_splits =
-            get_string_length(e.get_name().as_str()) / (name_length - (3 + 2 * current_depth));
+            get_string_length(e.get_name().as_str()) / (name_length - (2 + 2 * current_depth));
 
         for j in 1..num_splits + 1 {
             let mut e_name = String::from("│ ");
