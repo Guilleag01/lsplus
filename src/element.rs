@@ -79,7 +79,7 @@ impl Element {
             name,
             perms: Some(metadata.permissions()),
             size: metadata.len(),
-            creation: metadata.created().unwrap(),
+            creation: metadata.created().unwrap_or(SystemTime::now()),
         }
     }
 
