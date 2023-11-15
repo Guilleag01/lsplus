@@ -65,7 +65,11 @@ pub fn get_size_string(bytes: u64) -> String {
     let exp = bytes_f32.log(1024.0).floor();
     let divided_num = bytes_f32 / 1024.0_f32.powf(exp);
     let unit = ['B', 'K', 'M', 'G', 'T', 'P', 'Y', 'E'][exp as usize];
-    format!("{:.2} {} ", divided_num, unit)
+    if unit == 'B' {
+        format!("{:.0} {} ", divided_num, unit)
+    } else {
+        format!("{:.2} {} ", divided_num, unit)
+    }
 }
 
 pub fn system_time_to_string(system_time: SystemTime) -> String {
