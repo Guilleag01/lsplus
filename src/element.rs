@@ -73,16 +73,18 @@ impl Element {
             name.push_str(read_link(path_built).unwrap().to_str().unwrap())
         }
 
+        let s = if t == TypeOfFile::Dir {
+            0
+        } else {
+            metadata.len()
+        };
+
         Self {
             path: path_str.to_string(),
             file_type: t,
             name,
             perms: Some(metadata.permissions()),
-            size: if t == TypeOfFile::Dir {
-                0
-            } else {
-                metadata.len()
-            },
+            size: s,
             creation: metadata.created().unwrap_or(SystemTime::now()),
         }
     }

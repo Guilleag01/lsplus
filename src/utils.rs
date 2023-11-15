@@ -80,7 +80,7 @@ pub fn system_time_to_string(system_time: SystemTime) -> String {
 pub fn sort_elements(elements: &mut Vec<Element>, sort_by: &SortBy) {
     match sort_by {
         SortBy::NONE => (),
-        SortBy::NAME => elements.sort_unstable_by_key(|a| a.get_name()),
+        SortBy::NAME => elements.sort_unstable_by_key(|a| a.get_name().to_lowercase()),
         SortBy::SIZE => elements.sort_unstable_by_key(|e| Reverse(e.get_size())),
         SortBy::CREATION => elements.sort_unstable_by_key(|e| Reverse(e.get_creation())),
     }
