@@ -48,7 +48,13 @@ fn print_elements(
         print!("│ ");
         let mut e_string = String::new();
         if current_depth > 0 {
-            add_recursive_lines(&mut e_string, &new_is_last_element, i == elements.len() - 1);
+            add_recursive_lines(
+                &mut e_string,
+                &new_is_last_element,
+                i == elements.len() - 1,
+                "╰─",
+                "├─",
+            );
         }
 
         e_string.push_str(e.to_string().as_str());
@@ -69,10 +75,12 @@ fn print_elements(
         for j in 1..num_splits + 1 {
             let mut e_name = String::from("│ ");
             if current_depth > 0 {
-                add_recursive_lines_for_name_resize(
+                add_recursive_lines(
                     &mut e_name,
                     &new_is_last_element,
                     i == elements.len() - 1,
+                    "  ",
+                    "| ",
                 )
             }
             e_name.push_str("  ");
@@ -105,26 +113,12 @@ fn print_elements(
     num_elements
 }
 
-fn add_recursive_lines(e_string: &mut String, is_last_element: &[bool], is_last: bool) {
-    for &is_last in &is_last_element[1..] {
-        if is_last {
-            e_string.push_str("  ");
-        } else {
-            e_string.push_str("│ ");
-        }
-    }
-
-    if is_last {
-        e_string.push_str("╰─");
-    } else {
-        e_string.push_str("├─");
-    }
-}
-
-fn add_recursive_lines_for_name_resize(
+fn add_recursive_lines(
     e_string: &mut String,
     is_last_element: &[bool],
     is_last: bool,
+    str_is_last: &str,
+    str_is_not_last: &str,
 ) {
     for &is_last in &is_last_element[1..] {
         if is_last {
@@ -135,9 +129,9 @@ fn add_recursive_lines_for_name_resize(
     }
 
     if is_last {
-        e_string.push_str("  ");
+        e_string.push_str(str_is_last);
     } else {
-        e_string.push_str("│ ");
+        e_string.push_str(str_is_not_last);
     }
 }
 
