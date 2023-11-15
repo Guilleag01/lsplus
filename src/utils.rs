@@ -1,10 +1,28 @@
-use std::fs;
-use std::time::SystemTime;
-
+use crate::element::Element;
 use chrono::offset::Utc;
 use chrono::DateTime;
+use clap::ValueEnum;
+use std::{cmp::Reverse, fmt::Display, fs, time::SystemTime};
 
-use crate::element::Element;
+#[derive(ValueEnum, Clone, Debug)]
+pub enum SortBy {
+    NONE,
+    NAME,
+    SIZE,
+    CREATION,
+}
+
+impl Display for SortBy {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let text = match self {
+            Self::NONE => "none",
+            Self::NAME => "name",
+            Self::SIZE => "size",
+            Self::CREATION => "creation",
+        };
+        write!(f, "{}", text)
+    }
+}
 
 #[inline]
 pub fn get_elements_from_path(path: String, all: bool) -> Vec<Element> {
@@ -55,6 +73,15 @@ pub fn system_time_to_string(system_time: SystemTime) -> String {
     datetime.format("%d-%m-%y %H:%M").to_string()
 }
 
+pub fn sort_elements(elements: &mut Vec<Element>, sort_by: &SortBy) {
+    match sort_by {
+        SortBy::NONE => (),
+        SortBy::NAME => elements.sort_unstable_by_key(|a| a.get_name()),
+        SortBy::SIZE => elements.sort_unstable_by_key(|e| Reverse(e.get_size())),
+        SortBy::CREATION => elements.sort_unstable_by_key(|e| Reverse(e.get_creation())),
+    }
+}
+
 // ALL ICONS MUST BE FOLLOWED BY A SPACE
 pub fn get_icon_file_type<'a>(filename: String) -> &'a str {
     let extension = filename.split('.').last().unwrap(); //.collect::<Vec<&str>>()[1..].join(".");
@@ -86,6 +113,7 @@ pub fn get_icon_file_type<'a>(filename: String) -> &'a str {
         "rs" => " ",
         "js" => " ",
         "sh" => " ",
+        "db" => "󰆼 ",
         "c" => " ",
         _ => "󰈔 ",
     }

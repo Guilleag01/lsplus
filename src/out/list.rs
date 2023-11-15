@@ -1,9 +1,10 @@
 use crate::element::{Element, TypeOfFile};
 use crate::utils::{
-    get_elements_from_path, get_size_string, get_string_length, pad_string, system_time_to_string,
+    get_elements_from_path, get_size_string, get_string_length, pad_string, sort_elements,
+    system_time_to_string, SortBy,
 };
 
-pub fn list(elements: Vec<Element>, recursive_limit: usize) {
+pub fn list(mut elements: Vec<Element>, recursive_limit: usize, sort_by: SortBy) {
     //  ╭──────────────╼ File name ╾──────────────┬─╼ Size ╾─┬──╼ Creation ╾──╮
     //  │ some_example_file                       │ 420.69 G │ 01-01-70 00:00 │
     //  ╰─────────────────────────────────────────┴──────────┴────────────────╯
@@ -17,7 +18,14 @@ pub fn list(elements: Vec<Element>, recursive_limit: usize) {
         .min(width - 31);
 
     print_header(name_length);
-    let num_elements = print_elements(&elements, name_length, recursive_limit, 0, &Vec::new());
+    let num_elements = print_elements(
+        &mut elements,
+        name_length,
+        recursive_limit,
+        0,
+        &Vec::new(),
+        &sort_by,
+    );
     print_footer(num_elements, name_length);
 }
 
@@ -34,12 +42,15 @@ fn print_header(name_length: usize) {
 }
 
 fn print_elements(
-    elements: &Vec<Element>,
+    elements: &mut Vec<Element>,
     name_length: usize,
     recursive_limit: usize,
     current_depth: usize,
     is_last_element: &[bool],
+    sort_by: &SortBy,
 ) -> usize {
+    sort_elements(elements, sort_by);
+
     let mut num_elements = elements.len();
 
     let mut new_is_last_element = is_last_element.to_owned();
@@ -101,11 +112,12 @@ fn print_elements(
             let dir_path = e.get_path_string();
             new_is_last_element.push(i == elements.len() - 1);
             num_elements += print_elements(
-                &get_elements_from_path(dir_path, true),
+                &mut get_elements_from_path(dir_path, true),
                 name_length,
                 recursive_limit,
                 current_depth + 1,
                 &new_is_last_element,
+                sort_by,
             );
             new_is_last_element.pop();
         }

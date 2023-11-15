@@ -1,7 +1,7 @@
 use clap::Parser;
 use lsplus::{
     out::{default::default, list::list},
-    utils::get_elements_from_path,
+    utils::{get_elements_from_path, SortBy},
 };
 
 // Needs to be defined in main
@@ -21,6 +21,10 @@ pub struct Args {
     #[arg(short, long, default_value_t = 0)]
     recursive: usize,
 
+    /// Sort elements by parameter
+    #[arg(short, long, default_value_t = SortBy::NONE)]
+    sort: SortBy,
+
     /// Path of the directory to list
     #[arg(default_value_t = String::from("."))]
     path: String,
@@ -32,7 +36,7 @@ fn main() {
     let elements = get_elements_from_path(args.path, args.all);
 
     if args.list {
-        list(elements, args.recursive);
+        list(elements, args.recursive, args.sort);
     } else {
         default(elements);
     }

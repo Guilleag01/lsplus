@@ -78,7 +78,11 @@ impl Element {
             file_type: t,
             name,
             perms: Some(metadata.permissions()),
-            size: metadata.len(),
+            size: if t == TypeOfFile::Dir {
+                0
+            } else {
+                metadata.len()
+            },
             creation: metadata.created().unwrap_or(SystemTime::now()),
         }
     }
