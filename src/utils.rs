@@ -114,8 +114,8 @@ pub fn get_icon_file_type<'a>(filename: String) -> &'a str {
         "xml" => "󰗀 ",
         "lua" => " ",
         "php" => " ",
-        "vim" => " "
-            "rs" => " ",
+        "vim" => " ",
+        "rs" => " ",
         "js" => " ",
         "sh" => " ",
         "db" => "󰆼 ",
