@@ -91,7 +91,7 @@ fn print_elements(
                     &new_is_last_element,
                     i == elements.len() - 1,
                     "  ",
-                    "| ",
+                    "│ ",
                 )
             }
             e_name.push_str("  ");
@@ -184,7 +184,7 @@ fn print_footer(num_elements: usize, name_length: usize) {
 fn get_max_width(elements: &Vec<Element>, recursive_limit: usize, current_depth: usize) -> usize {
     let mut name_max_len = 0;
     for e in elements {
-        let mut length = get_string_length(e.to_string().as_str()) + current_depth * 2;
+        let mut length = e.to_string().chars().count() + current_depth * 2;
         if e.get_file_type() == TypeOfFile::Dir && current_depth < recursive_limit {
             let recursive_width = get_max_width(
                 &get_elements_from_path(e.get_path_string(), true),

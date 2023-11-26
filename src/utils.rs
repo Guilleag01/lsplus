@@ -77,7 +77,7 @@ pub fn system_time_to_string(system_time: SystemTime) -> String {
     datetime.format("%d-%m-%y %H:%M").to_string()
 }
 
-pub fn sort_elements(elements: &mut Vec<Element>, sort_by: &SortBy) {
+pub fn sort_elements(elements: &mut [Element], sort_by: &SortBy) {
     match sort_by {
         SortBy::NONE => (),
         SortBy::NAME => elements.sort_unstable_by_key(|a| a.get_name().to_lowercase()),
