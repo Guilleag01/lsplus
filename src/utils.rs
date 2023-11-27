@@ -72,6 +72,7 @@ pub fn get_size_string(bytes: u64) -> String {
     }
 }
 
+#[inline]
 pub fn system_time_to_string(system_time: SystemTime) -> String {
     let datetime: DateTime<Utc> = system_time.into();
     datetime.format("%d-%m-%y %H:%M").to_string()
@@ -102,6 +103,7 @@ pub fn get_icon_file_type<'a>(filename: String) -> &'a str {
         "ttf" | "fnt" => " ",
         "gitignore" => " ",
         "b" | "bf" => "󰧑 ",
+        "makefile" => " ",
         "json" => " ",
         "html" => " ",
         "lock" => "󰌾 ",
@@ -119,7 +121,9 @@ pub fn get_icon_file_type<'a>(filename: String) -> &'a str {
         "js" => " ",
         "sh" => " ",
         "db" => "󰆼 ",
+        "cs" => " ",
         "c" => " ",
+        "r" => " ",
         _ => "󰈔 ",
     }
 }

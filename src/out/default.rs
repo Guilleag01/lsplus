@@ -31,6 +31,9 @@ pub fn default(mut elements: Vec<Element>) {
             column_widths[j] = max_len;
         }
         i += 1;
+        if i == elements.len() {
+            break;
+        }
     }
 
     i -= 1;
