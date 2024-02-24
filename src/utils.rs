@@ -59,7 +59,7 @@ pub fn get_string_length(s: &str) -> usize {
 
 pub fn get_size_string(bytes: u64) -> String {
     if bytes == 0 {
-        return String::from("0.00 B ");
+        return String::from("   0 B ");
     }
     let bytes_f32 = bytes as f32;
     let exp = bytes_f32.log(1024.0).floor();
@@ -89,12 +89,12 @@ pub fn sort_elements(elements: &mut [Element], sort_by: &SortBy) {
 
 // ALL ICONS MUST BE FOLLOWED BY A SPACE
 pub fn get_icon_file_type<'a>(filename: String) -> &'a str {
-    let extension = filename.split('.').last().unwrap(); //.collect::<Vec<&str>>()[1..].join(".");
+    let extension = filename.split('.').last().unwrap();
     match extension.to_lowercase().as_str() {
         "jpg" | "jpeg" | "png" | "bmp" | "gif" | "webp" | "svg" => "󰋩 ",
         "zip" | "rar" | "7zip" | "tar" | "gz" | "tgz" => "󰗄 ",
+        "config" | "toml" | "yaml" | "conf" | "cfg" => "󰒓 ",
         "flv" | "avi" | "mp4" | "webm" | "mov" => " ",
-        "config" | "toml" | "yaml" | "conf" => "󰒓 ",
         "exe" | "bat" | "dll" | "msi" => " ",
         "mp3" | "wav" | "ogg" => " ",
         "java" | "jar" => " ",
@@ -117,11 +117,13 @@ pub fn get_icon_file_type<'a>(filename: String) -> &'a str {
         "lua" => " ",
         "php" => " ",
         "vim" => " ",
+        "key" => "󰌋 ",
         "rs" => " ",
         "js" => " ",
         "sh" => " ",
         "db" => "󰆼 ",
         "cs" => " ",
+        "md" => " ",
         "c" => " ",
         "r" => " ",
         _ => "󰈔 ",

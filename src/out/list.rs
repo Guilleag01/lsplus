@@ -57,6 +57,7 @@ fn print_elements(
 
     for (i, e) in elements.iter().enumerate() {
         print!("│ ");
+        // text.push_str("│ ");
         let mut e_string = String::new();
         if current_depth > 0 {
             add_recursive_lines(
@@ -69,14 +70,29 @@ fn print_elements(
         }
 
         e_string.push_str(e.to_string().as_str());
+        let file_text = pad_string(
+            get_slice_of_string(e_string.as_str(), name_length - 1, 0, current_depth),
+            name_length,
+            true,
+        );
+
         print!(
             "{}",
-            pad_string(
-                get_slice_of_string(e_string.as_str(), name_length - 1, 0, current_depth),
-                name_length,
-                true
-            )
+            file_text // if e.get_file_type() == TypeOfFile::Dir {
+                      //     file_text.cyan().to_string()
+                      // } else {
+                      //     file_text
+                      // }
         );
+
+        // text.push_str(
+        //     pad_string(
+        //         get_slice_of_string(e_string.as_str(), name_length - 1, 0, current_depth),
+        //         name_length,
+        //         true,
+        //     )
+        //     .as_str(),
+        // );
 
         print_size_and_creation_date(e);
 
@@ -105,7 +121,9 @@ fn print_elements(
                 .as_str(),
             );
             print!("{}", pad_string(e_name, name_length + 2, true));
+            // text.push_str(pad_string(e_name, name_length + 2, true).as_str());
             println!("│          │                │");
+            // text.push_str("│          │                │\n");
         }
 
         if e.get_file_type() == TypeOfFile::Dir && current_depth < recursive_limit {
